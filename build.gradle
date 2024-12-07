@@ -1,0 +1,71 @@
+buildscript {
+
+    ext.versions = [
+            'springboot' : '2.3.4.RELEASE',
+    ]
+
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${versions.springboot}")
+        classpath("org.springframework.boot:spring-boot-dependencies:${versions.springboot}")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'war'
+//apply plugin: "findbugs"
+
+sourceCompatibility = 17
+targetCompatibility = 17
+
+
+repositories {
+    mavenCentral()
+    maven{
+        url("https://packages.confluent.io/maven")
+    }
+
+
+}
+
+dependencies {
+    //　ログ出力
+    implementation 'ch.qos.logback:logback-classic'
+    implementation 'ch.qos.logback:logback-core'
+
+    implementation 'org.springframework.kafka:spring-kafka'
+    // https://mvnrepository.com/artifact/org.apache.kafka/connect-runtime
+
+    implementation ("org.apache.kafka:connect-runtime:2.5.1"){
+        //exclude group: "org.slf4j" ,module: "slf4j-log4j12"
+    }
+
+    compileOnly 'org.projectlombok:lombok'
+
+    // データベースの接続
+    //implementation 'mysql:mysql-connector-java'
+    //implementation 'com.zaxxer:HikariCP'
+    implementation 'org.postgresql:postgresql'
+
+    implementation ("io.confluent:kafka-connect-jdbc:10.0.11"){
+        //exclude group: "com.oracle.database" ,module: "*"
+        //exclude group: "com.microsoft.sqlserver" ,module: "*"
+        exclude group: "*" ,module: "*"
+    }
+
+}
+
+test {
+    useJUnitPlatform()
+}
+
+
+
